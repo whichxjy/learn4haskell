@@ -545,8 +545,8 @@ Casual reminder about adding top-level type signatures for all functions :)
 
 mid :: Int -> Int -> Int -> Int
 mid x y z
-    | ((y < x) && (x < z)) || ((z < x) && (x < y)) = x
-    | ((x < y) && (y < z)) || ((z < y) && (y < x)) = y
+    | (y < x && x < z) || (z < x && x < y) = x
+    | (x < y && y < z) || (z < y && y < x) = y
     | otherwise = z
 
 {- |
@@ -631,10 +631,7 @@ specifying complex expressions.
 sumLast2 :: Int -> Int
 sumLast2 n = (lastOne + secondLast)
     where
-        lastOne :: Int
-        lastOne = mod (abs n) 10
-        secondLast :: Int
-        secondLast = mod (div (abs n) 10) 10
+        (secondLast, lastOne) = divMod (mod (abs n) 100) 10
 
 {- |
 =💣= Task 10*
