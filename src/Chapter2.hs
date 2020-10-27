@@ -349,8 +349,10 @@ ghci> :l src/Chapter2.hs
 -}
 subList :: Int -> Int -> [a] -> [a]
 subList lhs rhs xs
-    | lhs < 0 || rhs < 0 || lhs > rhs || rhs >= (length xs) = []
-    | otherwise = take (rhs - lhs + 1) (drop lhs xs)
+    | lhs < 0 || rhs < 0 || lhs > rhs = []
+    | otherwise = take takeLength (drop lhs xs)
+        where
+            takeLength = min (length xs) (rhs - lhs + 1)
 
 {- |
 =⚔️= Task 4
