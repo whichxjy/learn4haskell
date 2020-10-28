@@ -350,9 +350,7 @@ ghci> :l src/Chapter2.hs
 subList :: Int -> Int -> [a] -> [a]
 subList lhs rhs xs
     | lhs < 0 || rhs < 0 || lhs > rhs = []
-    | otherwise = take takeLength (drop lhs xs)
-        where
-            takeLength = min (length xs) (rhs - lhs + 1)
+    | otherwise = take (rhs - lhs + 1) (drop lhs xs)
 
 {- |
 =⚔️= Task 4
@@ -625,11 +623,8 @@ Implement a function that duplicates each element of the list
 
 -}
 duplicate :: [a] -> [a]
-duplicate l = go [] l
-    where
-        go :: [a] -> [a] -> [a]
-        go acc [] = acc
-        go acc (x : xs) = go (acc ++ [x, x]) xs
+duplicate [] = []
+duplicate (x : xs) = x : x : (duplicate xs)
 
 {- |
 =⚔️= Task 7
@@ -644,13 +639,9 @@ Write a function that takes elements of a list only on even positions.
 [2,3,4]
 -}
 takeEven :: [Int] -> [Int]
-takeEven l = go [] l 0
-    where
-        go :: [Int] -> [Int] -> Int -> [Int]
-        go acc [] index = acc
-        go acc (x : xs) index
-            | even index = go (acc ++ [x]) xs (index + 1)
-            | otherwise = go acc xs (index + 1)
+takeEven [] = []
+takeEven [x] = [x]
+takeEven (x : _ : xs) = x : (takeEven xs)
 
 {- |
 =🛡= Higher-order functions
@@ -757,7 +748,7 @@ value of the element itself
 🕯 HINT: Use combination of 'map' and 'replicate'
 -}
 smartReplicate :: [Int] -> [Int]
-smartReplicate l = concatMap (\x -> replicate x x) l
+smartReplicate = concatMap (\x -> replicate x x)
 
 {- |
 =⚔️= Task 9
@@ -771,7 +762,7 @@ the list with only those lists that contain a passed element.
 🕯 HINT: Use the 'elem' function to check whether an element belongs to a list
 -}
 contains :: Int -> [[Int]] -> [[Int]]
-contains n l = filter (elem n) l
+contains n = filter (elem n)
 
 
 {- |
@@ -811,13 +802,13 @@ Let's now try to eta-reduce some of the functions and ensure that we
 mastered the skill of eta-reducing.
 -}
 divideTenBy :: Int -> Int
-divideTenBy x = div 10 x
+divideTenBy = div 10
 
 listElementsLessThan :: Int -> [Int] -> [Int]
-listElementsLessThan x l = filter (< x) l
+listElementsLessThan x = filter (< x)
 
 pairMul :: [Int] -> [Int] -> [Int]
-pairMul xs ys = zipWith (*) xs ys
+pairMul = zipWith (*)
 
 {- |
 =🛡= Lazy evaluation
@@ -892,8 +883,11 @@ and reverses it.
   cheating!
 -}
 rewind :: [a] -> [a]
-rewind [] = []
-rewind (x : xs) = (rewind xs) ++ [x]
+rewind l = go [] l
+    where
+        go :: [a] -> [a] -> [a]
+        go acc [] = acc
+        go acc (x : xs) = go (x : acc) xs
 
 
 {-
