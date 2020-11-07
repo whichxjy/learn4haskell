@@ -566,7 +566,7 @@ False
 -}
 isVowel :: Char -> Bool
 isVowel c
-    | (c == 'a' || c == 'e' || c == 'i' || c == 'o' || c == 'u') = True
+    | c == 'a' || c == 'e' || c == 'i' || c == 'o' || c == 'u' = True
     | otherwise = False
 
 
@@ -632,7 +632,7 @@ specifying complex expressions.
 -}
 
 sumLast2 :: Int -> Int
-sumLast2 n = (lastOne + secondLast)
+sumLast2 n = lastOne + secondLast
     where
         (secondLast, lastOne) = divMod (mod (abs n) 100) 10
 
