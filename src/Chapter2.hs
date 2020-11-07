@@ -624,7 +624,7 @@ Implement a function that duplicates each element of the list
 -}
 duplicate :: [a] -> [a]
 duplicate []       = []
-duplicate (x : xs) = x : x : (duplicate xs)
+duplicate (x : xs) = x : x : duplicate xs
 
 {- |
 =⚔️= Task 7
@@ -641,7 +641,7 @@ Write a function that takes elements of a list only in even positions.
 takeEven :: [Int] -> [Int]
 takeEven []           = []
 takeEven [x]          = [x]
-takeEven (x : _ : xs) = x : (takeEven xs)
+takeEven (x : _ : xs) = x : takeEven xs
 
 {- |
 =🛡= Higher-order functions
@@ -883,7 +883,7 @@ and reverses it.
   cheating!
 -}
 rewind :: [a] -> [a]
-rewind l = go [] l
+rewind  = go []
     where
         go :: [a] -> [a] -> [a]
         go acc []       = acc
