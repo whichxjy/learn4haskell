@@ -525,28 +525,45 @@ newtype Castle = MkCastle
 
 data Building = Church | Library
 
+data HousePeople =
+      One
+    | Two
+    | Three
+    | Four
+    deriving (Enum, Show, Eq)
+
+housePeopleToInt :: HousePeople -> Int
+housePeopleToInt One   = 1
+housePeopleToInt Two   = 2
+housePeopleToInt Three = 3
+housePeopleToInt Four  = 4
+
 newtype House = MkHouse
-    { housePeople :: Int
+    { housePeople :: HousePeople
     }
 
 data City = MkCity
-    { cityCastle   :: Maybe Castle
-    , cityWalls    :: Int
-    , cityBuilding :: Building
-    , cityHouses   :: [House]
+    { cityCastleWalls :: Maybe (Castle, Int)
+    , cityBuilding    :: Building
+    , cityHouses      :: [House]
     }
 
 buildCastle :: City -> Castle -> City
-buildCastle city castle = city { cityCastle = Just castle }
+buildCastle city castle = case cityCastleWalls city of
+    Just (_, walls) -> city { cityCastleWalls = Just (castle, walls) }
+    Nothing         -> city { cityCastleWalls = Just (castle, 0) }
 
 buildHouse :: City -> House -> City
 buildHouse city house = city { cityHouses = house : cityHouses city }
 
 buildWalls :: City -> City
 buildWalls city =
-    let peopleCount = sum (map housePeople (cityHouses city))
+    let housePeopleList = map housePeople (cityHouses city)
+        peopleCount = sum (map housePeopleToInt housePeopleList)
     in if peopleCount >= 10
-        then city { cityWalls = cityWalls city + 1 }
+        then case cityCastleWalls city of
+            Just (castle, walls) -> city { cityCastleWalls = Just (castle, walls + 1) }
+            Nothing              -> city
         else city
 
 {-
@@ -1014,14 +1031,13 @@ instance Append Gold where
 
 instance Append [a] where
     append :: [a] -> [a] -> [a]
-    append lhs rhs = lhs ++ rhs
+    append = (++)
 
 instance (Append a) => Append (Maybe a) where
     append :: Maybe a -> Maybe a -> Maybe a
     append (Just lhs) (Just rhs) = Just (append lhs rhs)
-    append (Just lhs) Nothing    = Just lhs
-    append Nothing (Just rhs)    = Just rhs
-    append Nothing Nothing       = Nothing
+    append x Nothing             = x
+    append Nothing x             = x
 
 {-
 =🛡= Standard Typeclasses and Deriving
@@ -1099,9 +1115,8 @@ isWeekend Saturday = True
 isWeekend _        = False
 
 nextDay :: Day -> Day
-nextDay day =
-    let nextDayIndex = (fromEnum day + 1) `mod` 7
-    in toEnum nextDayIndex
+nextDay Saturday = Sunday
+nextDay x        = succ x
 
 daysToParty :: Day -> Int
 daysToParty day = (fromEnum Friday - fromEnum day) `mod` 7
