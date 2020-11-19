@@ -301,8 +301,6 @@ expressions in GHCi
   functions and operators first. Remember this from the previous task? ;)
 
 >>> 1 + 2
-
-=======
 3
 >>> 10 - 15
 -5
@@ -328,7 +326,6 @@ True
 2
 >>> max (min 1 10) (min 5 7)
 5
->>>>>>> f3a0f55... Add chapter 1
 
 Because Haskell is a __statically-typed__ language, you see an error each time
 you try to mix values of different types in situations where you are not
@@ -548,8 +545,8 @@ Casual reminder about adding top-level type signatures for all functions :)
 
 mid :: Int -> Int -> Int -> Int
 mid x y z
-    | (y < x && x < z) || (z < x && x < y) = x
-    | (x < z && z < y) || (y < z && z < x) = z
+    | (y <= x && x <= z) || (z <= x && x <= y) = x
+    | (x <= z && z <= y) || (y <= z && z <= x) = z
     | otherwise = y
 
 {- |
