@@ -508,10 +508,14 @@ instance Applicative List where
     pure x = Cons x Empty
 
     (<*>) :: List (a -> b) -> List a -> List b
-    Empty <*> _                  = Empty
-    _ <*> Empty                  = Empty
-    (Cons f fxs) <*> (Cons x xs) = Cons (f x) (fxs <*> xs)
+    Empty <*> _     = Empty
+    _ <*> Empty     = Empty
+    Cons f fs <*> l = concatenateList (fmap f l) (fs <*> l)
 
+concatenateList :: List a -> List a -> List a
+concatenateList Empty x        = x
+concatenateList xs Empty       = xs
+concatenateList (Cons x xs) ys = Cons x (concatenateList xs ys)
 
 {- |
 =🛡= Monad
@@ -642,10 +646,6 @@ flattenList :: List (List a) -> List a
 flattenList Empty       = Empty
 flattenList (Cons x xs) = concatenateList x (flattenList xs)
 
-concatenateList :: List a -> List a -> List a
-concatenateList Empty x        = x
-concatenateList (Cons x xs) ys = Cons x (concatenateList xs ys)
-
 {- |
 =💣= Task 8*: Before the Final Boss
 
@@ -718,7 +718,7 @@ instance Functor Tree where
 
 reverseTree :: Tree a -> Tree a
 reverseTree EmptyNode      = EmptyNode
-reverseTree (Node x lx rx) = Node x (reverseTree lx) (reverseTree rx)
+reverseTree (Node x lx rx) = Node x (reverseTree rx) (reverseTree lx)
 
 
 convertTreeToList :: Tree a -> [a]
